@@ -1,0 +1,38 @@
+{
+  "name": "filib/sitemapgenerator",
+  "description": "Generates a Sitemap",
+  "type": "craft-plugin",
+  "require": {
+    "php": ">=7.4",
+    "craftcms/cms": "^4.0.0 || ^5.2"
+  },
+  "require-dev": {
+    "craftcms/ecs": "dev-main",
+    "craftcms/phpstan": "dev-main"
+  },
+  "autoload": {
+    "psr-4": {
+      "filib\\sitemapgenerator\\": "src/"
+    }
+  },
+  "extra": {
+    "handle": "sitemapgenerator",
+    "name": "Sitemap Generator",
+    "developer": "Filib",
+    "documentationUrl": "",
+    "class": "filib\\sitemapgenerator\\SitemapGenerator",
+    "craft": {
+      "plugin-name": "Sitemap Generator"
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "platform": {
+      "php": "8.2"
+    },
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{% extends "_layouts/cp.twig" %}
+{% set title = "Sitemap Generator" %}
+{% block content %}
+    <h1>Settings</h1>
+    <form method="post" id="settingsform" action="/actions/sitemapgenerator/settings/save">
+        {{ csrfInput() }}
+        {{ redirectInput('/admin/settings/plugins/sitemapgenerator') }}
+    </form>
+    <table class="data fullwidth">
+        <thead>
+        <tr>
+            <th>Section</th>
+            <th>Priority</th>
+            <th>Enabled</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for section in entryTypes %}
+            <tr>
+                <td>{{ section.name }}</td>
+                <td>
+                    <label>
+                        <input
+                                type="number"
+                                name="settings[{{ section.id }}][weight]"
+                                min="0"
+                                max="100"
+                                value="{{ section.weight }}"
+                                form="settingsform"
+                        >
+                    </label>
+                </td>
+                <td>
+                    {% if section.hasUrls %}
+                        <label>
+                            <input
+                                    type="checkbox"
+                                    name="settings[{{ section.id }}][enabled]"
+                                    value="{{ section.enabled ? 1 : 0 }}"
+                                    {{ section.enabled ? "checked" : null }}
+                                    form="settingsform"
+                            >
+                        </label>
+                    {% else %}
+                        {{ "Section has no public URLs" }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button style="margin: 20px 0;" class="btn" type="submit" form="settingsform">Save and generate Sitemap</button>
+    {% if craft.app.session.hasFlash('notice') %}
+        <div class="notification notice">
+            {{ craft.app.session.getFlash('notice') }}
+        </div>
+    {% endif %}
+
+    {% if craft.app.session.hasFlash('error') %}
+        <div class="notification error">
+            {{ craft.app.session.getFlash('error') }}
+        </div>
+    {% endif %}
+{% endblock %}
