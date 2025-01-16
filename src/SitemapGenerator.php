@@ -3,10 +3,16 @@
 namespace filib\sitemapgenerator;
 
 use Craft;
+use craft\base\Element;
 use craft\base\Model;
 use craft\base\Plugin;
 use craft\db\Query;
+use craft\elements\Entry;
+use craft\events\ModelEvent;
+use craft\helpers\ElementHelper;
+use filib\sitemapgenerator\controllers\SitemapController;
 use filib\sitemapgenerator\models\Settings;
+use yii\base\Event;
 
 /**
  * Sitemap Generator plugin
@@ -27,6 +33,7 @@ class SitemapGenerator extends Plugin
         self::$plugin = $this;
         if ($this->isInstalled) {
             $this->loadSettingsFromDatabase();
+            $this->registerEvents();
         }
     }
 
@@ -55,6 +62,24 @@ class SitemapGenerator extends Plugin
         ];
 
         $this->setSettings($this->loadedSettings);
+    }
+    private function registerEvents(): void
+    {
+        Event::on(
+            Entry::class,
+            Element::EVENT_AFTER_SAVE,
+            function (ModelEvent $e) {
+                /* @var Entry $entry */
+                $entry = $e->sender;
+
+                if (ElementHelper::isDraftOrRevision($entry)) {
+                    return;
+                } else {
+                    $generator = new SitemapController('settings', Craft::$app);
+                    $generator->actionGenerateSitemap();
+                }
+            }
+        );
     }
 
     public function afterInstall(): void
